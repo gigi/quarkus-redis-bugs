@@ -1,0 +1,45 @@
+services:
+
+  redis1:
+    image: redis:latest
+    command: redis-server
+    ports:
+      - '6379:6379'
+
+  redis2:
+    image: redis:latest
+    command: redis-server
+    ports:
+      - '6389:6379'
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    environment:
+      - REDIS_HOSTS=local:redis2:6379,local:redis1:6379
+    ports:
+      - 8081:8081
+
+  quarkus:
+    build:
+      context: .
+      dockerfile: src/main/docker/Dockerfile.jvm
+    ports:
+      - '8080:8080'
+      - '50051:50051'
+      - '9464:9464'
+      - '4000:4000'
+    environment:
+      QUARKUS_REDIS_HOSTS: redis://redis1:6379
+
+        # overwrite QUARKUS_REDIS__REDIS_CLIENT_NAME__HOSTS doesnt work as described in https://quarkus.io/guides/redis-reference
+      #      QUARKUS_REDIS__CLIENT2__HOSTS: redis://redis2:6389
+
+      QUARKUS_REDIS_CLIENT2_HOSTS: redis://redis2:6379
+
+      QUARKUS_REDIS_CLIENT3_HOSTS: redis://redis1:6379
+      QUARKUS_REDIS__CLIENT4__HOSTS: redis://redis1:6379
+    depends_on:
+      redis1:
+        condition: service_started
+      redis2:
+        condition: service_started
