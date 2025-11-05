@@ -45,6 +45,10 @@ public class Startup {
         RedisDataSource ds3 = Arc.container().instance(RedisDataSource.class, RedisClientName.Literal.of("client3")).get();
         System.out.println("ds3 found: " + (ds3 != null));
 
+        System.out.println("--- Trying to select client4 connection from runtime ---");
+        RedisDataSource ds4 = Arc.container().instance(RedisDataSource.class, RedisClientName.Literal.of("client4")).get();
+        System.out.println("ds4 found: " + (ds4 != null));
+
         // Optionally list all redis host properties discovered (debug aid)
         System.out.println("--- All redis host properties detected ---");
         config.getPropertyNames().forEach(p -> {
