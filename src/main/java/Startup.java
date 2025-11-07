@@ -14,6 +14,10 @@ import org.eclipse.microprofile.config.ConfigProvider;
 public class Startup {
 
     @Inject
+    @RedisClientName("simple")
+    RedisDataSource simple;
+
+    @Inject
     @Any
     InjectableInstance<RedisDataSource> dataSources;
 
